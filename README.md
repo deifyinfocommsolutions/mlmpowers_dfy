@@ -1,2 +1,1 @@
-# mlmpowers_dfy
-MLMPowers Portal for ibeads
+MLM Powers Portal for ibeads
