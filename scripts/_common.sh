@@ -7,6 +7,33 @@ ynh_add_fpm5_config () {
 		fpm_config_dir="/etc/php5/fpm"
 		fpm_service="php5-fpm"
 	fi
+	ynh_app_setting_set $app fpm_config_dir "/etc/php/5.6/fpm"
+	ynh_app_setting_set $app fpm_service "php5.6-fpm"
+	finalphpconf="/etc/php/5.6/fpm/pool.d/$app.conf"
+	ynh_backup_if_checksum_is_different "$finalphpconf"
+	sudo cp ../conf/php-fpm.conf "$finalphpconf"
+	ynh_replace_string "__NAMETOCHANGE__" "$app" "$finalphpconf"
+	ynh_replace_string "__FINALPATH__" "$final_path" "$finalphpconf"
+	ynh_replace_string "__USER__" "$app" "$finalphpconf"
+	sudo chown root: "$finalphpconf"
+	ynh_store_file_checksum "$finalphpconf"
+
+	if [ -e "../conf/php-fpm.ini" ]
+	then
+		echo "Please do not use a separate ini file, merge you directives in the pool file instead." &>2
+	fi
+	sudo systemctl reload php5.6-fpm
+}
+
+ynh_add_fpm5original_config () {
+	
+	local fpm_config_dir="/etc/php/5.6/fpm"
+	local fpm_service="php5.6-fpm"
+	# Configure PHP-FPM 5 on Debian Jessie
+	if [ "$(ynh_get_debian_release)" == "jessie" ]; then
+		fpm_config_dir="/etc/php5/fpm"
+		fpm_service="php5-fpm"
+	fi
 	ynh_app_setting_set $app fpm_config_dir "$fpm_config_dir"
 	ynh_app_setting_set $app fpm_service "$fpm_service"
 	finalphpconf="$fpm_config_dir/pool.d/$app.conf"
