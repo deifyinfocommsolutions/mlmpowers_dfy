@@ -116,7 +116,7 @@ usermod -g "$user" "$user"
 # PHP-FPM CONFIGURATION
 #=================================================
 
-if [ $(is_checksum_different "/etc/php5/fpm/pool.d/$app.conf") -eq 0 ]
+if [ $(is_checksum_different "/etc/php/5.6/fpm/pool.d/$app.conf") -eq 0 ]
 then
     # Create a dedicated php-fpm config
     ynh_replace_string "__USER__" "$user" "../conf/php-fpm.conf"
