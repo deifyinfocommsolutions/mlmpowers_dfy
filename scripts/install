@@ -97,7 +97,7 @@ chpasswd <<< "${user}:${password}"
 
 # Create a dedicated php-fpm config
 ynh_replace_string "__USER__" "$user" "../conf/php-fpm.conf"
-ynh_add_fpm_config
+ynh_add_fpm5_config
 
 #=================================================
 # SPECIFIC SETUP
