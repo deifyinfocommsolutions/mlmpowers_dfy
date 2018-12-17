@@ -86,7 +86,7 @@ chown root: "$final_path"
 # RESTORE THE PHP-FPM CONFIGURATION
 #=================================================
 
-ynh_restore_file "/etc/php5/fpm/pool.d/$app.conf"
+ynh_restore_file "/etc/php/5.6/fpm/pool.d/$app.conf"
 
 #=================================================
 # SPECIFIC RESTORATION
