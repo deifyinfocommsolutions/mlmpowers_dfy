@@ -13,6 +13,8 @@ ynh_add_fpm5_config () {
 	sudo chown root: "$finalphpconf"
 	ynh_store_file_checksum "$finalphpconf"
 
+	echo $fpm_service
+	
 	if [ -e "../conf/php-fpm.ini" ]
 	then
 		echo "Please do not use a separate ini file, merge you directives in the pool file instead." &>2
