@@ -1,3 +1,52 @@
+ynh_add_nginx5_config () {
+	PHP5=$(echo "php 5.6" | tr -d ' ')
+	finalnginxconf="/etc/nginx/conf.d/$domain.d/$app.conf"
+	local others_var=${1:-}
+	ynh_backup_if_checksum_is_different "$finalnginxconf"
+	sudo cp ../conf/nginx.conf "$finalnginxconf"
+
+	# To avoid a break by set -u, use a void substitution ${var:-}. If the variable is not set, it's simply set with an empty variable.
+	# Substitute in a nginx config file only if the variable is not empty
+	if test -n "${path_url:-}"; then
+		# path_url_slash_less is path_url, or a blank value if path_url is only '/'
+		local path_url_slash_less=${path_url%/}
+		ynh_replace_string "__PATH__/" "$path_url_slash_less/" "$finalnginxconf"
+		ynh_replace_string "__PATH__" "$path_url" "$finalnginxconf"
+	fi
+	if test -n "${domain:-}"; then
+		ynh_replace_string "__DOMAIN__" "$domain" "$finalnginxconf"
+	fi
+	if test -n "${port:-}"; then
+		ynh_replace_string "__PORT__" "$port" "$finalnginxconf"
+	fi
+	if test -n "${app:-}"; then
+		ynh_replace_string "__NAME__" "${PHP5}-fpm-$app" "$finalnginxconf"
+	fi
+	if test -n "${final_path:-}"; then
+		ynh_replace_string "__FINALPATH__" "$final_path" "$finalnginxconf"
+	fi
+
+		
+	# Replace all other variable given as arguments
+	for var_to_replace in $others_var
+	do
+		# ${var_to_replace^^} make the content of the variable on upper-cases
+		# ${!var_to_replace} get the content of the variable named $var_to_replace 
+		ynh_replace_string "__${var_to_replace^^}__" "${!var_to_replace}" "$finalnginxconf"
+	done
+	
+	if [ "${path_url:-}" != "/" ]
+	then
+		ynh_replace_string "^#sub_path_only" "" "$finalnginxconf"
+	else
+		ynh_replace_string "^#root_path_only" "" "$finalnginxconf"
+	fi
+
+	ynh_store_file_checksum "$finalnginxconf"
+
+	sudo systemctl reload nginx
+}
+
 ynh_add_fpm5_config () {
 	
 	PHP5=$(echo "php 5.6" | tr -d ' ')
