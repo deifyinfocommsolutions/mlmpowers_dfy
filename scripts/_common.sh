@@ -9,6 +9,7 @@ ynh_add_fpm5_config () {
 	finalphpconf="/etc/php/5.6/fpm/pool.d/$app.conf"
 	sudo cp ../conf/php-fpm.conf "$finalphpconf"
 	ynh_replace_string "__NAMETOCHANGE__" "$app" "$finalphpconf"
+	ynh_replace_string "__PHPNAMETOCHANGE__" "${PHP5}-fpm-$app" "$finalphpconf"
 	ynh_replace_string "__FINALPATH__" "$final_path" "$finalphpconf"
 	ynh_replace_string "__USER__" "$app" "$finalphpconf"
 	sudo chown root: "$finalphpconf"
